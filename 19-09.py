@@ -6,10 +6,12 @@
 
 # Y saber el % de asistencia de cada alumno.
 
-alumnos = { "nombre": "Juan", "notas": [7, 8, 9, 6], "asistencia": 90 }, 
+alumnos = [
+{ "nombre": "Juan", "notas": [7, 8, 9, 6], "asistencia": 90 }, 
 { "nombre": "Maria", "notas": [5, 6, 4, 7], "asistencia": 60 }, 
 { "nombre": "Pedro", "notas": [1, 9, 4, 7], "asistencia": 95 },
 { "nombre": "Ana", "notas": [6, 5, 7, 8], "asistencia": 85 }
+]
 
 
 def Control(promedio,asisAprob):
@@ -27,8 +29,8 @@ def Regularidad(notas,asis):
     return Control(promedio,goodAsis)
 
 for Estudiante in alumnos:
-    estadoReg= Regularidad(Estudiante["notas"],Estudiante["asistencia"])
+    estadoReg= Regularidad(Estudiante['notas'],Estudiante['asistencia'])
     if estadoReg:
-       print(f"El alumno {Estudiante["nombre"]} esta regular")
+       print(f"El alumno {Estudiante['nombre']} esta regular")
     else:
-        print(f"El alumno {Estudiante["nombre"]} NO esta regular")
+        print(f"El alumno {Estudiante['nombre']} NO esta regular")
