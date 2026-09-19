@@ -28,21 +28,25 @@ for i in range(jugadoresTotales): # i no itera hasta el entero de no utilizar ra
             break
         else:
             print("Ingrese una categoria correspondiente al sistema númerico de 8a a 1a categoria")
-    listaTorneo.append({"numJugador": i+1, "nombre": nombreJ, "categoria": categoriaJ})
+    listaTorneo.append({"numeroJugador": i+1, "nombre": nombreJ, "categoria": categoriaJ})
 
 parejasTotales= int(jugadoresTotales/2) # Por el momento tomemos que todo torneo tendra una cantidad par de participantes
-pickJugadores=listaTorneo # Requiero de una copia editable de los jugadores disponibles para conformar una pareja 
+pickJugadores=listaTorneo.copy() # Requiero de una copia editable de los jugadores disponibles para conformar una pareja 
+dosIntegrantes=[] # Para poder guardar los integrantes y cargarlos simultaneamente
 for i in range(parejasTotales):
     nombrePareja=str(input("Ingrese el nombre de la pareja a conformar: "))
-    print(pickJugadores)
-    for j in 2: # Solo pueden ser dos jugadores por pareja
-        integrante=int(input(f"Ingresar intergrante N° {j+1} de {nombrePareja} por numero de jugador en el torneo: "))
-        pickJugadores.pop(integrante-1)
-        if j = 0:
-            integrante1 = listaTorneo[integrante-1]
-        else:
-            integrante2 = listaTorneo[integrante-1]
-    listaParejas.append({"nombre": nombrePareja, "jugador1": integrante1, "jugador2": integrante2})
+    print(pickJugadores) # Muestro por pantalla los jugadores sin pareja
+
+    for j in range(2): # Solo pueden ser dos jugadores por pareja
+        numIntegrante=int(input(f"Ingresar intergrante N° {j+1} de [{nombrePareja}] por numero de jugador en el torneo: "))
+        for jug in pickJugadores:
+            if jug["numeroJugador"] == numIntegrante:
+                checkIntegrante=jug
+                break
+        dosIntegrantes.append(checkIntegrante["nombre"])
+        pickJugadores.remove(checkIntegrante)
+
+    listaParejas.append({"nombre": nombrePareja, "jugador1": dosIntegrantes[0], "jugador2": dosIntegrantes[1]})
 
 print(listaParejas)
 
