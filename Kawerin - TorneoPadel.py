@@ -37,9 +37,12 @@ for i in range(parejasTotales):
     print(pickJugadores)
     for j in 2: # Solo pueden ser dos jugadores por pareja
         integrante=int(input(f"Ingresar intergrante N° {j+1} de {nombrePareja} por numero de jugador en el torneo: "))
+        pickJugadores.pop(integrante-1)
         if j = 0:
             integrante1 = listaTorneo[integrante-1]
         else:
             integrante2 = listaTorneo[integrante-1]
     listaParejas.append({"nombre": nombrePareja, "jugador1": integrante1, "jugador2": integrante2})
+
+print(listaParejas)
 
