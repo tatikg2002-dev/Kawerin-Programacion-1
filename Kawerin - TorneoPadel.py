@@ -85,17 +85,17 @@ with open("lista_parejas.txt","w") as f:
             pick_jugadores.remove(check_integrante)
         f.write(f"{{\"nombre\": \"{nombre_pareja}\", \"jugador1\": \"{dos_integrantes[0]}\", \"jugador2\": \"{dos_integrantes[1]}\"}}\n")
 
-ok:int = 0
-while ok != 5: 
+ok:int=0
+while ok != 5:
     print("\n")
     print("Agregar un nuevo jugador a la lista de inscriptos (1)\n")
     print("Mostrar la lista completa de inscriptos (2)\n")
     print("Buscar un jugador por nombre (3)\n")
     print("Eliminar un jugador de la lista (4)\n")
     print("Salir del programa (5)\n")
-    opcion=int(input("Ingrese la opción deseada: "))
+    ok=int(input("Ingrese la opción deseada: "))
 
-    match opcion:
+    match ok:
         case 1:
             cantidad_cargar=int(input("Ingresar la cantidad de jugadores a agregar: "))
             cargar_lista(cantidad_cargar)
