@@ -5,22 +5,23 @@
 
 import shutil
 
-categorias = [8,7,6,5,4,3,2,1] # Las categorias de padle se jerarquizan de 8 a 1 de forma decendente
-archivo_interno = "lista_torneo.txt" # Archivo donde se guardará la lista de inscriptos
+categorias = [8,7,6,5,4,3,2,1] 
+archivo_interno = "lista_torneo.txt"
 
-def cargar_lista(add:bool):
-    nombreJ= str(input("Ingrese el nombre del jugador: "))
-    while add:
-        categoriaJ= int(input("Ingrese la categoria del jugador: "))
-        if categoriaJ in categorias:
-            break
-        else:
-            print("Ingrese una categoria correspondiente al sistema númerico de 8a a 1a categoria")
-    with open(archivo_interno,"r") as f:
-        numeros = [eval(linea.strip())["numeroJugador"] for linea in f if linea.strip()]
-    numero = max(numeros, default=0) + 1
-    with open(archivo_interno,"a") as f:
-        f.write(f"{{\"numeroJugador\": {numero}, \"nombre\": \"{nombreJ}\", \"categoria\": {categoriaJ}}}\n")
+def cargar_lista(num_carga:int):
+    for i in range(num_carga):
+        nombreJ= str(input("Ingrese el nombre del jugador: "))
+        while True:
+            categoriaJ= int(input("Ingrese la categoria del jugador: "))
+            if categoriaJ in categorias:
+                break
+            else:
+                print("Ingrese una categoria correspondiente al sistema númerico de 8a a 1a categoria")
+        with open(archivo_interno,"r") as f:
+            numeros = [eval(linea.strip())["numeroJugador"] for linea in f if linea.strip()]
+        numero = max(numeros, default=0) + 1
+        with open(archivo_interno,"a") as f:
+            f.write(f"{{\"numeroJugador\": {numero}, \"nombre\": \"{nombreJ}\", \"categoria\": {categoriaJ}}}\n")
 
 def mostrar_lista(lista):
     with open(lista,"r") as f:
@@ -39,65 +40,65 @@ def buscar_jug(nombre_buscar:str):
 
 def eliminar_jug(nombre_eliminar:str):
     with open("lista_torneo.txt","r") as f:
-        lineas=f.readlines()
+        Revisado=f.readlines()
     with open("lista_torneo.txt","w") as f:
-        for linea in lineas:
+        for linea in Revisado:
             if nombre_eliminar != eval(linea.strip())["nombre"]:
                 f.write(linea)
             else:
                 print(f"El jugador {nombre_eliminar} ha sido eliminado de la lista de inscriptos")
 
+jugadores_totales=int(input("Ingrese la cantidad total de jugadores inscriptos: "))
+open(archivo_interno,"w").close() 
+cargar_lista(jugadores_totales)
 
-jugadores_totales = int(input("Ingrese la cantidad total de jugadores inscriptos: "))
-ok = True
-
-
-parejas_totales = int(jugadores_totales / 2) # Por el momento tomemos que todo torneo tendra una cantidad par de participantes
-shutil.copy("lista_torneo.txt","lista_pick.txt") # Requiero de una copia editable de los jugadores disponibles para conformar una pareja 
+parejas_totales = int(jugadores_totales / 2) 
+shutil.copy("lista_torneo.txt","lista_pick.txt") 
 pick_jugadores = []
 
 with open("lista_pick.txt", "r") as f:
     for linea in f:
         pick_jugadores.append(eval(linea.strip()))
 
-dos_integrantes=[] # Para poder guardar los integrantes y cargarlos simultaneamente
+dos_integrantes=[]
 
 with open("lista_parejas.txt","w") as f:
     for i in range(parejas_totales):
         nombre_pareja=str(input("Ingrese el nombre de la pareja a conformar: "))
-        print(pick_jugadores) # Muestro por pantalla los jugadores sin pareja
+        print(pick_jugadores)
 
-        for j in range(2): # Solo pueden ser dos jugadores por pareja
-            num_integrante=int(input(f"Ingresar intergrante N° {j+1} de [{nombre_pareja}] por numero de jugador en el torneo: "))
-            for jug in eval(linea.strip()):
-                if jug["numeroJugador"] == num_integrante:
-                    check_integrante=jug
-                break
-        dos_integrantes.append(check_integrante["nombre"])
-        pick_jugadores.remove(check_integrante)
-            
+        for j in range(2):
+            check_integrante=None
+            while check_integrante is None:
+                num_integrante=int(input(f"Ingresar intergrante N° {j+1} de [{nombre_pareja}] por numero de jugador en el torneo: "))
+                for jug in pick_jugadores:
+                    if jug["numeroJugador"] == num_integrante:
+                        check_integrante=jug
+                        break
+            dos_integrantes.append(check_integrante["nombre"])
+            pick_jugadores.remove(check_integrante)
         f.write(f"{{\"nombre\": \"{nombre_pareja}\", \"jugador1\": \"{dos_integrantes[0]}\", \"jugador2\": \"{dos_integrantes[1]}\"}}\n")
 
-while ok: # Menu de opciones para el usuario
+ok:int = 0
+while ok != 5: 
     print("Agregar un nuevo jugador a la lista de inscriptos (1)\n")
     print("Mostrar la lista completa de inscriptos (2)\n")
     print("Buscar un jugador por nombre (3)\n")
     print("Eliminar un jugador de la lista (4)\n")
     print("Salir del programa (5)\n")
     opcion=int(input("Ingrese la opción deseada: "))
-    if opcion==5:
-        ok=False
-    else:
-        match opcion:
-            case 1:
-                cargar_lista(True)
-            case 2:
-                mostrar_lista("lista_torneo.txt")
-            case 3:
-                nombre_buscar=str(input("Ingrese el nombre del jugador a buscar: "))
-                buscar_jug(nombre_buscar)
-            case 4: 
-                nombre_eliminar=str(input("Ingrese el nombre del jugador a eliminar: "))
-                eliminar_jug(nombre_eliminar)
+
+    match opcion:
+        case 1:
+            cantidad_cargar=int(input("Ingresar la cantidad de jugadores a agregar: "))
+            cargar_lista(cantidad_cargar)
+        case 2:
+            mostrar_lista(archivo_interno)
+        case 3:
+            nombre_buscar=str(input("Ingrese el nombre del jugador a buscar: "))
+            buscar_jug(nombre_buscar)
+        case 4: 
+            nombre_eliminar=str(input("Ingrese el nombre del jugador a eliminar: "))
+            eliminar_jug(nombre_eliminar)
 
 
