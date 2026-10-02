@@ -33,16 +33,27 @@ def buscar_jug(nombre_buscar:str):
         if not checked:
             print("El jugador no se encuentra registrado en el torneo")     
 
-with open("lista_torneo.txt","w") as f:
-    jugadores_totales=int(input("¿Cuántos jugadores van a participar en el torneo? Ingrese el total: "))
-    for i in range(jugadores_totales): # i no itera hasta el entero de no utilizar range(entero)
-        nombreJ= str(input("Ingrese el nombre del jugador: "))
-        while True:
-            categoriaJ= int(input("Ingrese la categoria del jugador: "))
-            if categoriaJ in categorias:
-                break
+def eliminar_jug(nombre_eliminar:str):
+    with open("lista_torneo.txt","r") as f:
+        lineas=f.readlines()
+    with open("lista_torneo.txt","w") as f:
+        for linea in lineas:
+            if nombre_eliminar != eval(linea.strip())["nombre"]:
+                f.write(linea)
             else:
-                print("Ingrese una categoria correspondiente al sistema númerico de 8a a 1a categoria")
+                print(f"El jugador {nombre_eliminar} ha sido eliminado de la lista de inscriptos")
+
+with open("lista_torneo.txt","w") as f:
+    for linea in f:
+        jugadores_totales=int(input("¿Cuántos jugadores van a participar en el torneo? Ingrese el total: "))
+        for i in range(jugadores_totales): # i no itera hasta el entero de no utilizar range(entero)
+            nombreJ= str(input("Ingrese el nombre del jugador: "))
+            while True:
+                categoriaJ= int(input("Ingrese la categoria del jugador: "))
+                if categoriaJ in categorias:
+                    break
+                else:
+                    print("Ingrese una categoria correspondiente al sistema númerico de 8a a 1a categoria")
         f.write(f"{{\"numeroJugador\": {i+1}, \"nombre\": \"{nombreJ}\", \"categoria\": {categoriaJ}}}\n")
 
 parejas_totales= int(jugadores_totales/2) # Por el momento tomemos que todo torneo tendra una cantidad par de participantes
@@ -72,5 +83,26 @@ with open("lista_parejas.txt","w") as f:
 
         f.write(f"{{\"nombre\": \"{nombre_pareja}\", \"jugador1\": \"{dos_integrantes[0]}\", \"jugador2\": \"{dos_integrantes[1]}\"}}\n")
 
+while ok:
+    print("Agregar un nuevo jugador a la lista de inscriptos (1)\n")
+    print("Mostrar la lista completa de inscriptos (2)\n")
+    print("Buscar un jugador por nombre (3)\n")
+    print("Eliminar un jugador de la lista (4)\n")
+    print("Salir del programa (5)\n")
+    opcion=int(input("Ingrese la opción deseada: "))
+    if opcion==5:
+        ok=False
+    else:
+        match opcion:
+            case 1:
+                cargar_lista(True)
+            case 2:
+                mostrar_lista("lista_torneo.txt")
+            case 3:
+                nombre_buscar=str(input("Ingrese el nombre del jugador a buscar: "))
+                buscar_jug(nombre_buscar)
+            case 4: 
+                nombre_eliminar=str(input("Ingrese el nombre del jugador a eliminar: "))
+                eliminar_jug(nombre_eliminar)
 
 
