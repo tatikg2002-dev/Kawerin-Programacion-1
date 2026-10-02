@@ -6,7 +6,7 @@
 import shutil
 
 categorias = [8,7,6,5,4,3,2,1] 
-archivo_interno = "lista_torneo.txt"
+
 
 def cargar_lista(num_carga:int):
     for i in range(num_carga):
@@ -17,10 +17,10 @@ def cargar_lista(num_carga:int):
                 break
             else:
                 print("Ingrese una categoria correspondiente al sistema númerico de 8a a 1a categoria")
-        with open(archivo_interno,"r") as f:
+        with open("lista_torneo.txt","r") as f:
             numeros = [eval(linea.strip())["numeroJugador"] for linea in f if linea.strip()]
         numero = max(numeros, default=0) + 1
-        with open(archivo_interno,"a") as f:
+        with open("lista_torneo.txt","a") as f:
             f.write(f"{{\"numeroJugador\": {numero}, \"nombre\": \"{nombreJ}\", \"categoria\": {categoriaJ}}}\n")
 
 def mostrar_lista(lista):
@@ -48,8 +48,14 @@ def eliminar_jug(nombre_eliminar:str):
             else:
                 print(f"El jugador {nombre_eliminar} ha sido eliminado de la lista de inscriptos")
 
-jugadores_totales=int(input("Ingrese la cantidad total de jugadores inscriptos: "))
-open(archivo_interno,"w").close() 
+while True:
+    jugadores_totales=int(input("Ingrese la cantidad total de jugadores inscriptos: "))
+    control = jugadores_totales % 2
+    if control == 0:
+        break
+    else:
+        print("Ingresar una cantidad de jugadores par ")
+open("lista_torneo.txt","w").close()  
 cargar_lista(jugadores_totales)
 
 parejas_totales = int(jugadores_totales / 2) 
@@ -81,6 +87,7 @@ with open("lista_parejas.txt","w") as f:
 
 ok:int = 0
 while ok != 5: 
+    print("\n")
     print("Agregar un nuevo jugador a la lista de inscriptos (1)\n")
     print("Mostrar la lista completa de inscriptos (2)\n")
     print("Buscar un jugador por nombre (3)\n")
@@ -93,7 +100,7 @@ while ok != 5:
             cantidad_cargar=int(input("Ingresar la cantidad de jugadores a agregar: "))
             cargar_lista(cantidad_cargar)
         case 2:
-            mostrar_lista(archivo_interno)
+            mostrar_lista("lista_torneo.txt")
         case 3:
             nombre_buscar=str(input("Ingrese el nombre del jugador a buscar: "))
             buscar_jug(nombre_buscar)
