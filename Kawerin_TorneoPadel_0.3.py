@@ -13,58 +13,79 @@ def leer_json(archivo: str) -> list:
 
 def escribir_json(archivo: str, datos: list):
   with open(archivo, "w", encoding="utf-8") as f:
-    json.dump(datos, f, ensure_ascii=False, indent=4)
+    json.dump(datos, f, ensure_ascii=False, indent=2)
 
 def cargar_lista(num_carga:int):
-    jugadores = leer_json("lista_torneo.json")
+    lista_jugadores:list = leer_json("lista_torneo.json")
     for i in range(num_carga):
-        nombreJ = str(input(f"Ingrese el nombre del jugador {i+1}: ")).strip()
-        numeros = [j["numeroJugador"] for j in jugadores]
-        numero_actual = max(numeros, default=0)
+        nombre_J = str(input(f"Ingrese el nombre del jugador {i+1}: ")).strip()
+        numeros = [j["numero_jugador"] for j in lista_jugadores]
+        numero_actual:int = max(numeros, default=0)
         while True:
-            categoriaJ = int(input(f"Ingrese la categoría de {nombreJ} (8 a 1): "))
-            if categoriaJ in categorias:
+            categoria_J = int(input(f"Ingrese la categoría de {nombre_J} (8 a 1): "))
+            if categoria_J in categorias:
                 break
             else:
                 print("Ingrese una categoría correspondiente al sistema numérico de 8a a 1a categoría")
             numero_actual += 1
             nuevo_jugador = {
-                "numeroJugador": numero_actual,
-                "nombre": nombreJ,
-                "categoria": categoriaJ,
+                "numero_jugador": numero_actual,
+                "nombre": nombre_J,
+                "categoria": categoria_J,
                 }
-            jugadores.append(nuevo_jugador)
+            lista_jugadores.append(nuevo_jugador)
 
-            escribir_json("lista_torneo.json", jugadores)
-            
+    escribir_json("lista_torneo.json", lista_jugadores)
+
 def cargar_parejas(num_carga:int):
+    lista_jugadores:list = leer_json("lista_torneo.json")
+    lista_parejas:list = leer_json("lista_parejas.json")
+    jugadores_con_pareja = {j["nombre"] for j in lista_parejas}
+    pick_jugadores = [j for j in lista_jugadores if j["nombre"] not in jugadores_con_pareja]
+    for i in range(num_carga):
+        nombre_pareja = str(input(f"Ingrese el nombre de la pareja {i+1}: ")).strip()
+        for jug in pick_jugadores:
+            print(f"Nº: {jug['numero_jugador']} | Nombre: {jug['nombre']} | Categoría: {jug['categoria']}")
+        dos_lugares=[]
+        for j in range(2):
+            check_integrante=None
+            while check_integrante is None:
+                num_integrante=int(input(f"Ingresar intergrante N° {j+1} de [{nombre_pareja}] por numero de jugador en el torneo: "))
+                for jug in pick_jugadores:
+                    if jug["numero_jugador"] == num_integrante:
+                        dos_lugares.append(jug)
+                        check_integrante=jug
+                    else:
+                        print("El número ingresado no corresponde a ningún jugador disponible, por favor ingrese un número válido.")
+                    pick_jugadores.remove(check_integrante)
+        nueva_pareja = {
+            "nombre_pareja": nombre_pareja,
+            "jugador_1": dos_lugares[0],
+            "jugador_2": dos_lugares[1]
+        }
+        lista_parejas.append(nueva_pareja)
 
-def mostrar_lista(lista):
-    with open(lista,"r") as f:
-        for linea in f:
-            print(linea.strip())
-    
+    escribir_json("lista_parejas.json", lista_parejas)
+
+def mostrar_lista(archivo:str):
+    lector = leer_json(archivo)
+    print(json.dumps(lector, indent=2, ensure_ascii=False))
+
 def buscar_jug(nombre_buscar:str):
-    checked=False
-    with open("lista_torneo.txt","r") as f:
-        for linea in f:
-            if nombre_buscar == eval(linea.strip())["nombre"]:
-                print(linea.strip())
-                checked=True
-        if not checked:
-            print("El jugador no se encuentra registrado en el torneo")     
+    lista_jugadores:list = leer_json("lista_torneo.json")
+    check_jugador = (jug for jug in lista_jugadores if nombre_buscar.strip().lower() == jug["nombre"].strip().lower())
+
 
 def eliminar_jug(nombre_eliminar:str):
-
     checked=False
-    with open("lista_torneo.txt","r") as f:
-        lineas = f.readlines()
-    with open("lista_torneo.txt","w") as f:
-        for linea in lineas:
-            if nombre_eliminar != eval(linea.strip())["nombre"]:
-                f.write(linea)
-            else:
-                checked=True
+    lista_jugadores = leer_json("lista_torneo.json")
+    for jugador in lista_jugadores:
+        if nombre_eliminar == jugador["nombre"]:
+            checked=True
+            break
+    if checked:
+        jugadores = [j for j in lista_jugadores if j["nombre"] != nombre_eliminar]
+        escribir_json("lista_torneo.json", jugadores)
     if checked:
         print(f"El jugador {nombre_eliminar} ha sido eliminado del torneo")
     else:
@@ -73,13 +94,14 @@ def eliminar_jug(nombre_eliminar:str):
 ok:int=0
 while ok != 5:
     print("\n")
-    print("Menu de opciones")
+    print("Menú de opciones")
     print("Agregar un nuevo jugador a la lista de inscriptos (1)")
     print("Mostrar la lista completa de inscriptos (2)")
     print("Buscar un jugador por nombre (3)")
     print("Eliminar un jugador de la lista (4)")
     print("Salir del programa (5)")
     ok=int(input("Ingrese la opción deseada: "))
+    print("\n")
 
     match ok:
         case 1:
@@ -89,11 +111,11 @@ while ok != 5:
                 if control == 0:
                     break
                 else:
-                    print("Ingresar una cantidad de jugadores par ")
+                    print("Ingresar una cantidad de jugadores par \n")
             cargar_lista(cantidad_cargar)
             cargar_parejas(int(cantidad_cargar/2))
         case 2:
-            mostrar_lista("lista_torneo.txt")
+            mostrar_lista("lista_torneo.json")
         case 3:
             nombre_buscar=str(input("Ingrese el nombre del jugador a buscar: "))
             buscar_jug(nombre_buscar)
