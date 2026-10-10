@@ -1,4 +1,4 @@
-# Utilizar archvos .json para guardar la lista de jugadores y sus categorias.
+# Utilizar archivos .json para guardar la lista de jugadores y sus categorias.
 import json
 import os
 
@@ -16,7 +16,7 @@ def escribir_json(archivo: str, datos: list):
     json.dump(datos, f, ensure_ascii=False, indent=2)
 
 def cargar_lista(num_carga:int):
-    lista_jugadores:list = leer_json("lista_torneo.json")
+    lista_jugadores:list = leer_json("lista_torneo.json").strip()
     for i in range(num_carga):
         nombre_J = str(input(f"Ingrese el nombre del jugador {i+1}: ")).strip()
         numeros = [j["numero_jugador"] for j in lista_jugadores]
@@ -27,37 +27,48 @@ def cargar_lista(num_carga:int):
                 break
             else:
                 print("Ingrese una categoría correspondiente al sistema numérico de 8a a 1a categoría")
-            numero_actual += 1
-            nuevo_jugador = {
-                "numero_jugador": numero_actual,
-                "nombre": nombre_J,
-                "categoria": categoria_J,
-                }
-            lista_jugadores.append(nuevo_jugador)
+        numero_actual += 1
+        nuevo_jugador = {
+            "numero_jugador": numero_actual,
+            "nombre": nombre_J,
+            "categoria": categoria_J,
+            }
+        lista_jugadores.append(nuevo_jugador)
 
     escribir_json("lista_torneo.json", lista_jugadores)
 
 def cargar_parejas(num_carga:int):
     lista_jugadores:list = leer_json("lista_torneo.json")
     lista_parejas:list = leer_json("lista_parejas.json")
-    jugadores_con_pareja = {j["nombre"] for j in lista_parejas}
+    jugadores_con_pareja = set()
+    for pareja in lista_parejas:
+        jugadores_con_pareja.add(pareja["jugador_1"]["nombre"])
+        jugadores_con_pareja.add(pareja["jugador_2"]["nombre"])
     pick_jugadores = [j for j in lista_jugadores if j["nombre"] not in jugadores_con_pareja]
+
     for i in range(num_carga):
         nombre_pareja = str(input(f"Ingrese el nombre de la pareja {i+1}: ")).strip()
-        for jug in pick_jugadores:
-            print(f"Nº: {jug['numero_jugador']} | Nombre: {jug['nombre']} | Categoría: {jug['categoria']}")
         dos_lugares=[]
+
         for j in range(2):
             check_integrante=None
             while check_integrante is None:
+                for jug in pick_jugadores:
+                    print(f"Nº: {jug['numero_jugador']} | Nombre: {jug['nombre']} | Categoría: {jug['categoria']}")
+        
                 num_integrante=int(input(f"Ingresar intergrante N° {j+1} de [{nombre_pareja}] por numero de jugador en el torneo: "))
+
                 for jug in pick_jugadores:
                     if jug["numero_jugador"] == num_integrante:
-                        dos_lugares.append(jug)
-                        check_integrante=jug
-                    else:
-                        print("El número ingresado no corresponde a ningún jugador disponible, por favor ingrese un número válido.")
+                        check_integrante = jug
+                        break
+
+                if check_integrante is None:
+                    print("El número ingresado no corresponde a ningún jugador disponible.")
+                else:
+                    dos_lugares.append(check_integrante)
                     pick_jugadores.remove(check_integrante)
+
         nueva_pareja = {
             "nombre_pareja": nombre_pareja,
             "jugador_1": dos_lugares[0],
