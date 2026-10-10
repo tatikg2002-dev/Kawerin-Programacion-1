@@ -125,7 +125,8 @@ while ok != 5:
             mostrar_lista("lista_torneo.json")
         case 3:
             nombre_buscar=str(input("Ingrese el nombre del jugador a buscar: "))
-            buscar_jug(nombre_buscar)
+            encontrado = buscar_jug(nombre_buscar)
+            print(encontrado)
         case 4: 
             nombre_eliminar=str(input("Ingrese el nombre del jugador a eliminar: "))
             eliminar_jug(nombre_eliminar)
