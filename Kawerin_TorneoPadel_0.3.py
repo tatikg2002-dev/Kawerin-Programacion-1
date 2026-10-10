@@ -73,23 +73,19 @@ def mostrar_lista(archivo:str):
 
 def buscar_jug(nombre_buscar:str):
     lista_jugadores:list = leer_json("lista_torneo.json")
-    check_jugador = (jug for jug in lista_jugadores if nombre_buscar.strip().lower() == jug["nombre"].strip().lower())
-
+    check_jugador:list = [jug for jug in lista_jugadores if nombre_buscar.strip().lower() == jug["nombre"].strip().lower()]
+    if check_jugador != []:
+        return (json.dumps(check_jugador, indent=2, ensure_ascii=False))
+    else:
+        print("El jugador buscado no se encuentra registrado en el torneo")
 
 def eliminar_jug(nombre_eliminar:str):
-    checked=False
     lista_jugadores = leer_json("lista_torneo.json")
-    for jugador in lista_jugadores:
-        if nombre_eliminar == jugador["nombre"]:
-            checked=True
-            break
-    if checked:
-        jugadores = [j for j in lista_jugadores if j["nombre"] != nombre_eliminar]
-        escribir_json("lista_torneo.json", jugadores)
-    if checked:
-        print(f"El jugador {nombre_eliminar} ha sido eliminado del torneo")
-    else:
-        print("El jugador no se encuentra registrado en el torneo")
+    eliminar_J:list = buscar_jug(nombre_eliminar)
+    if eliminar_J:
+        lista_jugadores = [jug for jug in lista_jugadores if nombre_eliminar.strip().lower() != jug["nombre"].strip().lower()]
+        escribir_json("lista_torneo.json", lista_jugadores)
+        print(f"El jugador {nombre_eliminar} ha sido eliminado de la lista de inscriptos")
 
 ok:int=0
 while ok != 5:
