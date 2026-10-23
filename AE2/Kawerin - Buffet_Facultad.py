@@ -61,7 +61,7 @@ def guadar_ventas(ventas):
     archivo.close()
 
 def registrar_venta(arreglo, catalogo):
-    dia = str(input("Ingrese el día de la semana (Lunes, Martes, Miércoles, Jueves, Viernes): ")).capitalize()
+    dia = str(input("Ingrese el día de la semana (Lunes, Martes, Miercoles, Jueves, Viernes): ")).capitalize()
     while dia not in dias_semana:
         print("Día inválido. Por favor, ingrese un día válido de la semana.")
         dia = str(input("Ingrese el día de la semana (Lunes, Martes, Miércoles, Jueves, Viernes): ")).capitalize()
@@ -101,13 +101,13 @@ def mostrar_informes(matriz, catalogo):
         
         if total_prod > max_unidades:
             max_unidades = total_prod
-            prod_mas_vendidos = [catalogo[j]['nombre']]
+            producto_mas_vendidos = [catalogo[j]['nombre']]
         elif total_prod == max_unidades:
-            prod_mas_vendidos.append(catalogo[j]['nombre'])
+            producto_mas_vendidos.append(catalogo[j]['nombre'])
             
     print(" * Recaudación por día:")
     max_recaudacion = -1
-    dia_mayor_recaudacion = "" #Arranca vacía, acá se va a guardar el nombre del día que más plata hizo
+    dia_mayor_recaudacion = ""
     recaudacion_total = 0
     
     for i in range(5):
@@ -117,7 +117,7 @@ def mostrar_informes(matriz, catalogo):
             precio = catalogo[j]["precio"]
             recaudacion_dia = recaudacion_dia + (cantidad * precio)
             
-        print(f"- {dias_semana[i]}: ${recaudacion_dia}")
+        print(f"~ {dias_semana[i]}: ${recaudacion_dia}")
         recaudacion_total = recaudacion_total + recaudacion_dia
         
         if recaudacion_dia > max_recaudacion:
@@ -127,8 +127,8 @@ def mostrar_informes(matriz, catalogo):
     print("\n * Producto mas vendido y dia de mayores ventas:")
 
     mas_vendidos:str = " y ".join(producto_mas_vendido)
-    print(f"- Producto más vendido: {mas_vendidos} ({max_unidades} unid.)")
-    print(f"- Día de mayor recaudación: {dia_mayor_recaudacion} (${max_recaudacion})")
+    print(f"~ Producto más vendido: {mas_vendidos} ({max_unidades} unid.)")
+    print(f"~ Día de mayor recaudación: {dia_mayor_recaudacion} (${max_recaudacion})")
     
     print("\n * Productos sin ventas en la semana:")
     sin_ventas = False
@@ -139,10 +139,10 @@ def mostrar_informes(matriz, catalogo):
                 vendido = True
                 break
         if not vendido:
-            print(f"- {catalogo[j]['nombre']}")
+            print(f"~ {catalogo[j]['nombre']}")
             sin_ventas = True          
     if not sin_ventas:
-        print("- Todos los productos tuvieron al menos una venta.")
+        print("~ Todos los productos tuvieron al menos una venta.")
         
     print(f"\n * Total de la semana: ${recaudacion_total}")
 
@@ -166,4 +166,3 @@ while opcion != 3:
         guadar_ventas(matriz_ventas)
     else:
         print("Opción incorrecta")
-
