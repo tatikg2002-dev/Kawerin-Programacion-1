@@ -64,7 +64,7 @@ def registrar_venta(arreglo, catalogo):
     dia = str(input("Ingrese el día de la semana (Lunes, Martes, Miercoles, Jueves, Viernes): ")).capitalize()
     while dia not in dias_semana:
         print("Día inválido. Por favor, ingrese un día válido de la semana.")
-        dia = str(input("Ingrese el día de la semana (Lunes, Martes, Miércoles, Jueves, Viernes): ")).capitalize()
+        dia = str(input("Ingrese el día de la semana (Lunes, Martes, Miercoles, Jueves, Viernes): ")).capitalize()
 
     id_producto = int(input("Ingrese el código del producto: "))
     columna:int = indice_producto(id_producto, catalogo)
@@ -101,9 +101,9 @@ def mostrar_informes(matriz, catalogo):
         
         if total_prod > max_unidades:
             max_unidades = total_prod
-            producto_mas_vendidos = [catalogo[j]['nombre']]
+            producto_mas_vendido = [catalogo[j]['nombre']]
         elif total_prod == max_unidades:
-            producto_mas_vendidos.append(catalogo[j]['nombre'])
+            producto_mas_vendido.append(catalogo[j]['nombre'])
             
     print(" * Recaudación por día:")
     max_recaudacion = -1
