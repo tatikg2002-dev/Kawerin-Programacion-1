@@ -16,19 +16,16 @@ def buscar_cuenta():
 
 def consultar_cuenta_nombre(cuenta_nombre:str):
     for cuenta in cuentas_banco:
-        if cuenta["nombre"] == cuenta_nombre:
-            check=True
+        if cuenta["nombre"] == cuenta_nombre.title():
             return cuenta   
-    if not check:
-        print("No se encontró la cuenta con el nombre proporcionado.")
+    print("No se encontró la cuenta con el nombre proporcionado.")
 
 def consultar_cuenta_ID(cuenta_id:int):
     for cuenta in cuentas_banco:
         if cuenta["ID"] == cuenta_id:
             return cuenta
-        else:
-            print("No se encontró la cuenta con el ID proporcionado.")
-    
+    print("No se encontró la cuenta con el ID proporcionado.")
+
 def tipo_operacion(operacion:int, monto:float):
     if operacion == 1:
         return abs(monto)
@@ -38,15 +35,13 @@ def tipo_operacion(operacion:int, monto:float):
         print("Operación inválida. Por favor, ingrese 1 para depositar o 2 para extraer dinero.")
         return 0
 
-def modificar_dinero(cuenta:int, monto:float):
-    for usuarios in cuentas_banco:      
-        if monto < 0 and usuarios["saldo"] < abs(monto):
-                print("No se puede realizar la operación. Saldo insuficiente.")
-        else:
-            usuarios["saldo"] += monto
-            print("Operación realizada con éxito.")
-        return 
-    print("No se encontró la cuenta con el ID proporcionado.")
+def modificar_dinero(cuenta:dict, monto:float):    
+    if monto < 0 and cuenta["saldo"] < abs(monto):
+        print("Error: fondos insuficientes. No se realizó la operación.")
+        return
+    cuenta["saldo"] = cuenta["saldo"] + monto
+    print(f"Operación realizada con éxito. Nuevo saldo: ${cuenta['saldo']:,.2f}")    
+
 
 def registrar_cuenta():
     nuevo_ID = cuentas_banco[-1]["ID"] + 1
@@ -88,7 +83,7 @@ while opcion != 4:
                 monto = float(input("Ingrese el monto: "))
                 monto_modificado = tipo_operacion(operacion, monto)
                 if monto_modificado != 0:
-                    modificar_dinero(cuenta["ID"], monto_modificado)
+                    modificar_dinero(cuenta, monto_modificado)
         case 3:
             registrar_cuenta()
         case 4:
