@@ -3,7 +3,6 @@ import json
 
 días_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
 
-
 def cargar_catalogo(): 
     if os.path.exists("catalogo.json"):
         archivo = open("catalogo.json", "r", encoding="utf-8")
@@ -80,4 +79,8 @@ def registrar_venta(arreglo, catalogo):
         cantidad = int(input("Ingrese la cantidad vendida: "))
 
     fila:int = dia - 1
-    
+    arreglo[fila][columna] = arreglo[fila][columna] + cantidad
+    print(f"Se ha registrado la venta de {cantidad} unidades del producto con código {id_producto} para el día {dia}.")
+
+    guadar_ventas(arreglo)
+
