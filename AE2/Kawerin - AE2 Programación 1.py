@@ -45,10 +45,13 @@ def modificar_dinero(cuenta:dict, monto:float):
 
 def registrar_cuenta():
     nuevo_ID = cuentas_banco[-1]["ID"] + 1
-    nuevo_nombre = input("Ingrese el nombre del cliente: ")
-    nueva_cuenta = {"ID": nuevo_ID, "nombre": nuevo_nombre, "saldo": 50000.0}
-    cuentas_banco.append(nueva_cuenta)
-    print(f"Se ha creado una nueva cuenta con ID: {nuevo_ID} y saldo inicial de $50,000.00")
+    nuevo_nombre = input("Ingrese el nombre del cliente: ").title
+    if not nuevo_nombre.strip():
+        nueva_cuenta = {"ID": nuevo_ID, "nombre": nuevo_nombre, "saldo": 50000.0}
+        cuentas_banco.append(nueva_cuenta)
+        print(f"Se ha creado una nueva cuenta con ID: {nuevo_ID} y saldo inicial de $50,000.00")
+    else:
+        print("Debe ingresar un nombre con tal de registrarse")
 
 cuenta = None
 operacion = None
@@ -76,6 +79,10 @@ while opcion != 4:
     match opcion:
         case 1:
             cuenta = buscar_cuenta()
+            if cuenta:
+                print(f"El saldo de {cuenta['nombre']} es de ${cuenta['saldo']:,.2f}")
+            else:
+                print("La nombre o ID ingresados no corresponden a ninguna cuenta existente")
         case 2:
             cuenta = buscar_cuenta()
             if cuenta:
