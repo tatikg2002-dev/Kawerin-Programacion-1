@@ -45,8 +45,8 @@ def modificar_dinero(cuenta:dict, monto:float):
 
 def registrar_cuenta():
     nuevo_ID = cuentas_banco[-1]["ID"] + 1
-    nuevo_nombre = input("Ingrese el nombre del cliente: ").title
-    if not nuevo_nombre.strip():
+    nuevo_nombre = input("Ingrese el nombre del cliente: ").strip().title()
+    if nuevo_nombre:
         nueva_cuenta = {"ID": nuevo_ID, "nombre": nuevo_nombre, "saldo": 50000.0}
         cuentas_banco.append(nueva_cuenta)
         print(f"Se ha creado una nueva cuenta con ID: {nuevo_ID} y saldo inicial de $50,000.00")
@@ -81,13 +81,26 @@ while opcion != 4:
             cuenta = buscar_cuenta()
             if cuenta:
                 print(f"El saldo de {cuenta['nombre']} es de ${cuenta['saldo']:,.2f}")
-            else:
-                print("La nombre o ID ingresados no corresponden a ninguna cuenta existente")
+
         case 2:
             cuenta = buscar_cuenta()
             if cuenta:
-                operacion = int(input("Ingrese 1 para depositar o 2 para extraer dinero: "))
-                monto = float(input("Ingrese el monto: "))
+                operacion = input("Ingrese 1 para depositar o 2 para extraer dinero: ")
+                if not operacion.isdigit():
+                    print("Entrada inválida. Debe ingresar 1 o 2.")
+                    continue
+                operacion=int(operacion)
+            
+                monto = input("Ingrese el monto: ").strip()
+                if not monto.replace(".", "", 1).isdigit():
+                    print("Entrada inválida. Debe ingresar un número positivo.")
+                    continue
+                monto=float(monto)
+
+                if monto <= 0:
+                    print("El monto debe ser mayor a 0.")
+                    continue
+
                 monto_modificado = tipo_operacion(operacion, monto)
                 if monto_modificado != 0:
                     modificar_dinero(cuenta, monto_modificado)
