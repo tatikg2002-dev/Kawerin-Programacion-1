@@ -105,8 +105,6 @@ def eliminar_jug(nombre_eliminar:str):
 def ordenar_alfabetico(lista_original:list):
     lista=lista_original[:]
     n = len(lista)
-    comparaciones_a:int=0
-    intercambios_a:int=0
     for i in range(n-1):
         posicion_menor = i
         for j in range(n+i,n):
@@ -120,13 +118,20 @@ def ordenar_alfabetico(lista_original:list):
 
     return lista
 
+def mostrar_alfabetico():
+    inscriptos = leer_json("lista_torneo.json")
+    ordenada = ordenar_alfabetico(inscriptos)
+    print("LISTA DE INSCRIPTOS")
+    for jug in ordenada:
+        print(f"{jug['nombre']} | Categoría: {jug['categoria']}")
+
 def va_despues(a:dict,b:dict):
     if a["categoria"] != b["categoria"]:
         return a["categoria"] > b["categoria"]
     else:
         return a["nombre"].lower() > b["nombre"].lower()
 
-def cartelera_categoria(lista_original:list):
+def ordenar_categoria(lista_original:list):
     lista = lista_original[:]
     n = len(lista)
     i = 0
@@ -146,19 +151,32 @@ def cartelera_categoria(lista_original:list):
 
     return lista
 
+def mostrar_cartelera():
+    inscriptos = leer_json("lista_torneo.json")
+    ordenada = ordenar_categoria(inscriptos)
+    print("CARTELERA")
+    categoria_actual = None
+    for jug in ordenada:
+        if jug["categoria"] != categoria_actual:
+            categoria_actual = jug["categoria"]
+            print(f"\n- Categoría {categoria_actual} -")
+        print(f"  {jug['nombre']}")
 
 def 
-
-def
 
 ok:int=-1
 while ok != 0:
     print("\n")
     print("Menú de opciones")
     print("Agregar un nuevo jugador a la lista de inscriptos (1)")
-    print("Mostrar la lista completa de inscriptos (2)")
+    print("Mostrar la lista completa de inscriptos, en orden de inscripción (2)")
     print("Buscar un jugador por nombre (3)")
     print("Eliminar un jugador de la lista (4)")
+    print("Mostrar lista de inscriptos en orden alfabetico (5)")
+    print("Mostrar cartelera por categorias (6)")
+    print("Cargar puntaje de pareja (7)")
+    print("Mostrar tabla de posiciones (8)")
+    print("Análisis metodos utilizados en 5 y 6 (9)")
     print("Salir del programa (0)")
     ok=int(input("Ingrese la opción deseada: "))
     print("\n")
@@ -183,3 +201,17 @@ while ok != 0:
         case 4: 
             nombre_eliminar=str(input("Ingrese el nombre del jugador a eliminar: "))
             eliminar_jug(nombre_eliminar)
+        case 5:
+            comparaciones_a:int=0
+            intercambios_a:int=0
+            mostrar_alfabetico()
+        case 6: 
+            comparaciones_b:int=0
+            intercambios_b:int=0
+            mostrar_cartelera()
+        case 7:
+            cargar_puntos()
+        case 8:
+            mostrar_posiciones()
+        case 9:
+            tabla_análisis()
