@@ -75,7 +75,8 @@ def cargar_parejas(num_carga:int):
         nueva_pareja = {
             "nombre_pareja": nombre_pareja,
             "jugador_1": dos_lugares[0],
-            "jugador_2": dos_lugares[1]
+            "jugador_2": dos_lugares[1],
+            "puntos": 0
         }
         lista_parejas.append(nueva_pareja)
 
@@ -101,15 +102,64 @@ def eliminar_jug(nombre_eliminar:str):
         escribir_json("lista_torneo.json", lista_jugadores)
         print(f"El jugador {nombre_eliminar} ha sido eliminado de la lista de inscriptos")
 
-ok:int=0
-while ok != 5:
+def ordenar_alfabetico(lista_original:list):
+    lista=lista_original[:]
+    n = len(lista)
+    comparaciones_a:int=0
+    intercambios_a:int=0
+    for i in range(n-1):
+        posicion_menor = i
+        for j in range(n+i,n):
+            if lista[j]["nombre"].lower() < lista[posicion_menor]["nombre"].lower():
+                posicion_menor=j
+                comparaciones_a = comparaciones_a + 1
+
+        if posicion_menor != i:
+            lista[i], lista[posicion_menor] = lista[posicion_menor], lista[i]
+            intercambios_a = intercambios_a + 1
+
+    return lista
+
+def va_despues(a:dict,b:dict):
+    if a["categoria"] != b["categoria"]:
+        return a["categoria"] > b["categoria"]
+    else:
+        return a["nombre"].lower() > b["nombre"].lower()
+
+def cartelera_categoria(lista_original:list):
+    lista = lista_original[:]
+    n = len(lista)
+    i = 0
+    hubo_intercambio = True
+    comparaciones_b = 0
+    intercambios_b = 0
+
+    while i < n - 1 and hubo_intercambio:
+        hubo_intercambio = False
+        for j in range(n - 1 - i):
+            comparaciones_b = comparaciones_b + 1
+            if va_despues(lista[j], lista[j + 1]):
+                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+                intercambios_b = intercambios_b + 1
+                hubo_intercambio = True
+        i = i + 1
+
+    return lista
+
+
+def 
+
+def
+
+ok:int=-1
+while ok != 0:
     print("\n")
     print("Menú de opciones")
     print("Agregar un nuevo jugador a la lista de inscriptos (1)")
     print("Mostrar la lista completa de inscriptos (2)")
     print("Buscar un jugador por nombre (3)")
     print("Eliminar un jugador de la lista (4)")
-    print("Salir del programa (5)")
+    print("Salir del programa (0)")
     ok=int(input("Ingrese la opción deseada: "))
     print("\n")
 
