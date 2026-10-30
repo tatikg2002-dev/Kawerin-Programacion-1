@@ -107,10 +107,10 @@ def ordenar_alfabetico(lista_original:list):
     n = len(lista)
     for i in range(n-1):
         posicion_menor = i
-        for j in range(n+i,n):
+        for j in range(i+1,n):
+            comparaciones_a = comparaciones_a + 1
             if lista[j]["nombre"].lower() < lista[posicion_menor]["nombre"].lower():
                 posicion_menor=j
-                comparaciones_a = comparaciones_a + 1
 
         if posicion_menor != i:
             lista[i], lista[posicion_menor] = lista[posicion_menor], lista[i]
@@ -162,7 +162,44 @@ def mostrar_cartelera():
             print(f"\n- Categoría {categoria_actual} -")
         print(f"  {jug['nombre']}")
 
-def 
+def cargar_puntos_parejas():
+    parejas = leer_json("lista_parejas.json")
+    for i in range(len(parejas)):
+        print(f"{i+1}) {parejas[i]['nombre_pareja']} - puntos actuales: {parejas[i]['puntos']}")
+    
+    opcion = int(input("Ingrese el número de la pareja: "))
+    if opcion < 1 or opcion > len(parejas):
+        print("Número de pareja inválido")
+
+    puntos_texto = input("Ingrese los puntos que gano la pareja: ").strip()  
+    parejas[opcion - 1]["puntos"] = parejas[opcion - 1]["puntos"] + int(puntos_texto)
+
+    escribir_json("lista_parejas.json", parejas) 
+
+def ordenar_posiciones(lista_original:list):
+    lista = lista_original[:]
+    for i in range(1, len(lista)):
+        actual = lista[i]
+        j = i - 1
+        while j >= 0 and lista[j]["puntos"] < actual["puntos"]:
+            lista[j + 1] = lista[j]
+            j = j - 1
+        lista[j + 1] = actual
+    return lista
+
+def mostrar_tabla_posiciones():
+    parejas = leer_json("lista_parejas.json")
+    parejas_ordenadas= ordenar_posiciones(parejas)
+    print("TABLA DE POSICIONES")
+    for i in range(len(parejas_ordenadas)):
+        print(f"{i+1}º  {parejas_ordenadas[i]['nombre_pareja']} ({parejas_ordenadas[i]['jugador_1']['nombre']} / {parejas_ordenadas[i]['jugador_2']['nombre']}) - {parejas_ordenadas[i]['puntos']} pts")
+
+def tabla_análisis():
+    inscriptos = leer_json("lista_torneo.json")
+    print(f"Cantidad de inscriptos: {len(inscriptos)}\n")
+    print(f"{'Pedido':<10}{'Método':<10}{'Comparaciones':<10}{'Intercambios':<10}")
+    print(f"{'1. Orden alfabético':<10}{'Selección':<10}{comparaciones_a:<10}{intercambios_a:<10}")
+    print(f"{'2. Por categoría':<10}{'Burbuja':<10}{comparaciones_b:<10}{intercambios_b:<10}")
 
 ok:int=-1
 while ok != 0:
@@ -210,8 +247,8 @@ while ok != 0:
             intercambios_b:int=0
             mostrar_cartelera()
         case 7:
-            cargar_puntos()
+            cargar_puntos_parejas()
         case 8:
-            mostrar_posiciones()
+            mostrar_tabla_posiciones()
         case 9:
             tabla_análisis()
