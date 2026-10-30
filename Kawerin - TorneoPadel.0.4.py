@@ -197,9 +197,9 @@ def mostrar_tabla_posiciones():
 def tabla_análisis():
     inscriptos = leer_json("lista_torneo.json")
     print(f"Cantidad de inscriptos: {len(inscriptos)}\n")
-    print(f"{'Pedido':<10}{'Método':<10}{'Comparaciones':<10}{'Intercambios':<10}")
-    print(f"{'1. Orden alfabético':<10}{'Selección':<10}{comparaciones_a:<10}{intercambios_a:<10}")
-    print(f"{'2. Por categoría':<10}{'Burbuja':<10}{comparaciones_b:<10}{intercambios_b:<10}")
+    print(f"{'Pedido':<4}{'Método':<12}{'Comparaciones':<18}{'Intercambios':<26}")
+    print(f"{'1. Orden alfabético':<4}{'Selección':<12}{comparaciones_a:<18}{intercambios_a:<26}")
+    print(f"{'2. Por categoría':<4}{'Burbuja':<12}{comparaciones_b:<18}{intercambios_b:<26}")
 
 ok:int=-1
 while ok != 0:
