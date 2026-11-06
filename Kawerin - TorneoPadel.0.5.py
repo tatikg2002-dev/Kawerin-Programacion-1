@@ -145,7 +145,7 @@ def eliminar_jug(nombre_eliminar:str):
     return True
 
 def ordenar_alfabetico(nodo,lista_construir:list):
-    if nodo not None:
+    if nodo is not None:
         ordenar_alfabetico(traer_hijitus(nodo, "izq"), lista_construir)
         lista_construir.append({"nombre": nodo.get("nombre"), "categoria": int(nodo.get("categoria"))})
         ordenar_alfabetico(traer_hijitus(nodo, "der"), lista_construir)
