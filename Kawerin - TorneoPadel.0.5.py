@@ -144,27 +144,18 @@ def eliminar_jug(nombre_eliminar:str):
     print(f"El jugador {nombre_eliminar} ha sido eliminado de la lista de inscriptos")
     return True
 
-def ordenar_alfabetico(lista_original:list):
-    lista=lista_original[:]
-    n = len(lista)
-    for i in range(n-1):
-        posicion_menor = i
-        for j in range(i+1,n):
-            comparaciones_a = comparaciones_a + 1
-            if lista[j]["nombre"].lower() < lista[posicion_menor]["nombre"].lower():
-                posicion_menor=j
-
-        if posicion_menor != i:
-            lista[i], lista[posicion_menor] = lista[posicion_menor], lista[i]
-            intercambios_a = intercambios_a + 1
-
-    return lista
+def ordenar_alfabetico(nodo,lista_construir:list):
+    if nodo not None:
+        ordenar_alfabetico(traer_hijitus(nodo, "izq"), lista_construir)
+        lista_construir.append({"nombre": nodo.get("nombre"), "categoria": int(nodo.get("categoria"))})
+        ordenar_alfabetico(traer_hijitus(nodo, "der"), lista_construir)
+    
 
 def mostrar_alfabetico():
-    inscriptos = leer_json("lista_torneo.json")
-    ordenada = ordenar_alfabetico(inscriptos)
+    ordenados = []
+    ordenar_alfabetico(arbol_jugadores, ordenados)
     print("LISTA DE INSCRIPTOS")
-    for jug in ordenada:
+    for jug in ordenados:
         print(f"{jug['nombre']} | Categoría: {jug['categoria']}")
 
 def va_despues(a:dict,b:dict):
