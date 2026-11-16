@@ -1,0 +1,177 @@
+import json
+from collections import deque
+
+ARCHIVO_RED = "red_corrientes.json"
+# Estructura de datos para el grafo no dirigido: Diccionario de listas de tuplas
+# Ejemplo: {"Corrientes": [("Saladas", 90), ("Bella Vista", 150), ...]}
+
+def cargar_grafo():
+    try:
+        archivo = open(ARCHIVO_RED, "r", encoding="utf-8")
+        lista_ady = json.load(archivo)
+        archivo.close()
+        return lista_ady
+    except FileNotFoundError:
+        lista_ady = {
+            "Corrientes": [("Saladas", 90), ("Bella Vista", 150), ("Goya", 200), ("Curuzu Cuatia", 240)],
+            "Saladas": [("Corrientes", 90), ("Bella Vista", 80), ("Goya", 120)],
+            "Bella Vista": [("Corrientes", 150), ("Saladas", 80), ("Goya", 90)],
+            "Goya": [("Corrientes", 200), ("Bella Vista", 90), ("Esquina", 110), ("Saladas", 120)],
+            "Esquina": [("Goya", 110), ("Curuzu Cuatia", 105), ("Ituzaingo", 190)],
+            "Curuzu Cuatia": [("Corrientes", 240), ("Esquina", 105), ("Mercedes", 95), ("Paso de los Libres", 140)],
+            "Mercedes": [("Curuzu Cuatia", 95), ("Paso de los Libres", 120), ("Esquina",160), ("Ituzaingo", 190)],
+            "Paso de los Libres": [("Curuzu Cuatia", 140), ("Mercedes", 120), ("Monte Caseros", 85), ("Monte Caseros", 85), ("Ituzaingo", 100)],
+            "Monte Caseros": [("Paso de los Libres", 85), ("Paso de los Libres", 85)],
+            "Ituzaingo": [("Paso de los Libres", 100), ("Mercedes", 190), ("Esquina", 180)]
+        }
+        return lista_ady
+
+def guardar_grafo(lista_ady):
+    archivo = open(ARCHIVO_GRAFO, "w", encoding="utf-8")
+    json.dump(lista_ady, archivo, indent=4)
+    archivo.close()
+    print("Datos guardados en", ARCHIVO_RED)
+
+
+def obtener_nodos(lista_ady):
+    nodos = []
+    for clave in lista_ady:
+        nodos.append(clave)
+    return nodos
+
+
+def buscar_en_lista(lista, valor): # Busqueda secuencial manual
+    i = 0
+    pos = -1
+    while i < len(lista) and pos == -1:
+        if lista[i] == valor:
+            pos = i
+        i = i + 1
+    return pos
+
+
+def ordenar_seleccion(lista): # Ordenamiento por seleccion
+    n = len(lista)
+    for i in range(n - 1):
+        pos_min = i
+        for j in range(i + 1, n):
+            if lista[j] < lista[pos_min]:
+                pos_min = j
+        aux = lista[i]
+        lista[i] = lista[pos_min]
+        lista[pos_min] = aux
+
+
+def busqueda_binaria(vector, clave): # Busqueda binaria sobre lista ordenada
+    inicio = 0
+    fin = len(vector) - 1
+    pos = -1
+    while inicio <= fin and pos == -1:
+        medio = (inicio + fin) // 2
+        if vector[medio] == clave:
+            pos = medio
+        elif clave < vector[medio]:
+            fin = medio - 1
+        else:
+            inicio = medio + 1
+    return pos
+
+# RECORRIDO EN AMPLITUD (BFS) CON COLA
+def recorrido_amplitud(lista_ady, inicio):
+    visitados = []
+    cola = deque([inicio]) # Uso de cola
+    while cola:
+        nodo = cola.popleft()
+        if nodo not in visitados:
+            visitados.append(nodo)
+            for vecino, peso in red.get(nodo, []):
+                if vecino not in visitados:
+                    cola.append(vecino)
+    return visitados
+
+#  RECORRIDO EN PROFUNDIDAD (DFS) RECURSIVO 
+def recorrido_profundidad(lista_ady, nodo, visitados=None): #Explora cada rama de conexión hasta su extremo antes de retroceder.
+    if visitados is None:
+        visitados = set()
+    visitados.add(nodo)
+    for vecino, peso in lista_ady.get(nodo, []):
+        if vecino not in visitados:
+            recorrido_profundidad(red, vecino, visitados)
+    return list(visitados)
+
+#  DETECCION DE CICLOS 
+def detectar_ciclo(lista_ady, nodo_actual, visitados, raiz): #Detecta de forma recursiva si existe al menos un ciclo en el grafo no dirigido.
+    visitados.add(nodo_actual)
+    for vecino, peso in red.get(nodo_actual, []):
+        if vecino not in visitados:
+            if detectar_ciclo(red, vecino, visitados, nodo_actual):
+                return True
+        elif vecino != padre:
+            return True
+    return False
+
+def encontrar_puntos_articulacion(red):
+
+    nodos = obtener_nodos(red)  #Identifica los puntos únicos de fallo, simula la caída de cada sede y verifica mediante BFS si la red restante
+                                # pierde conexidad (cantidad de alcanzables < sedes activas restantes).
+    puntos = []
+    for i in range(len(nodos)):
+        sede_excluida = nodos[i]
+        copia_red = {
+            k: [v for v in vals if v[0] != sede_excluida] #k es key y guarda el nombre de la sede que se esta leyendo
+            for k, vals in red.items()
+            if k != sede_excluida
+        }
+        if len(copia_red) > 0:
+            nodo_inicio = list(copia_red.keys())[0]
+            alcanzables = recorrido_amplitud(copia_red, nodo_inicio)
+            if len(alcanzables) < len(copia_red):
+                puntos.append(sede_excluida)
+    return puntos
+
+def analizar_estructura_arbol_y_costos(red): #Verifica si la subred de enlaces principales cumple la definición formal de Árbol en Matemática Discreta:
+    red_principal = {nodo: [] for nodo in red}
+    aristas_principales = []
+    aristas_respaldo = []
+
+    for nodo in red:
+        for vecino, peso, tipo in red[nodo]:
+            if tipo == "principal":
+                red_principal[nodo].append((vecino, peso, tipo))
+                if nodo < vecino:
+                    aristas_principales.append((nodo, vecino, peso))
+            else:
+                if nodo < vecino:
+                    aristas_respaldo.append((nodo, vecino, peso))
+
+    aristas_principales = ordenar_aristas_seleccion(aristas_principales)
+    aristas_respaldo = ordenar_aristas_seleccion(aristas_respaldo)
+
+    n_vertices = len(red_principal)
+    n_aristas = len(aristas_principales)
+    inicio = obtener_nodos(red_principal)[0]
+
+    es_conexo = len(recorrido_amplitud(red_principal, inicio)) == n_vertices
+    tiene_ciclos = detectar_ciclo(red_principal, inicio, set(), None)
+    es_arbol = es_conexo and (not tiene_ciclos) and (n_aristas == n_vertices - 1)
+
+    costo_principal = 0
+    for arista in aristas_principales:
+        costo_principal += arista[2]
+
+    costo_respaldo = 0
+    for arista in aristas_respaldo:
+        costo_respaldo += arista[2]
+
+    return {
+        "es_arbol": es_arbol,
+        "es_conexo": es_conexo,
+        "tiene_ciclos": tiene_ciclos,
+        "n_vertices": n_vertices,
+        "n_aristas": n_aristas,
+        "aristas_principales": aristas_principales,
+        "aristas_respaldo": aristas_respaldo,
+        "costo_principal": costo_principal,
+        "costo_respaldo": costo_respaldo,
+        "costo_total": costo_principal + costo_respaldo,
+    }
