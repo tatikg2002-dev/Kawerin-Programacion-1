@@ -1,0 +1,52 @@
+def dfs_detectar_ciclo(grafo, nodo_actual, visitado, padre):
+    " Función auxiliar recursiva que recorre el grafo en profundidad (DFS) buscando retrocesos que formen ciclos. "
+    
+    visitado.add(nodo_actual)
+    
+    # Recorremos todos los vecinos del nodo actual
+    for vecino in grafo.get(nodo_actual, {}): # Si el vecino no fue visitado, bajamos recursivamente por él
+        if vecino not in visitado:
+            
+            if dfs_detectar_ciclo(grafo, vecino, visitado, nodo_actual):
+                
+                return True  # Si el vecino ya fue visitado y NO es el padre, hay un ciclo
+        
+        elif vecino != padre:
+            
+            return True
+            
+    return False
+
+def tiene_ciclos(grafo):   #Función principal que evalúa todo el grafo.
+
+    visitado = set()
+    
+    for nodo in grafo:
+        if nodo not in visitado:
+            if dfs_detectar_ciclo(grafo, nodo, visitado, None):
+                return True # Encontró al menos un ciclo
+                
+    return False # El grafo es acíclico
+
+# BLOQUE DE PRUEBA
+if __name__ == "__main__":
+    
+    red_con_ciclo = { # 1. Red que SÍ tiene un ciclo (A -> B -> C -> A)
+        'A': {'B': 2},
+        'B': {'A': 2, 'C': 3},
+        'C': {'B': 3, 'A': 1}
+    }
+    
+    red_sin_ciclo = { # 2. Red que NO tiene ciclos (Estructura lineal / árbol: A - B - C)
+        'A': {'B': 2},
+        'B': {'A': 2, 'C': 3},
+        'C': {'B': 3}
+    }
+    
+    print("--- PRUEBA 1 ---")
+    resultado_1 = tiene_ciclos(red_con_ciclo)
+    print("¿La red 1 tiene ciclos?", resultado_1)  # Debería imprimir True
+    
+    print("\n--- PRUEBA 2 ---")
+    resultado_2 = tiene_ciclos(red_sin_ciclo)
+    print("¿La red 2 tiene ciclos?", resultado_2)  # Debería imprimir False
